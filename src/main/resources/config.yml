@@ -1,0 +1,202 @@
+# ============================================================
+#  DiscordConnect
+# ============================================================
+
+# ------------------------------------------------------------
+#  Bot
+# ------------------------------------------------------------
+bot:
+  # Token from https://discord.com/developers/applications (Bot > Reset Token).
+  # Keep it secret: anyone who has it can control your bot.
+  token: 'YOUR_BOT_TOKEN_HERE'
+
+  # What the bot shows under its name in the member list.
+  presence:
+    enabled: true
+    # ONLINE, IDLE, DND or INVISIBLE
+    status: ONLINE
+    activity:
+      # PLAYING, STREAMING, LISTENING, WATCHING, COMPETING or CUSTOM
+      type: CUSTOM
+      # Placeholders: {online}, {max_players}
+      text: 'Minecraft with {online} players'
+
+# ------------------------------------------------------------
+#  Channels
+#  To get an ID, turn on Developer Mode in Discord (Settings > Advanced),
+#  then right-click the channel and choose Copy Channel ID.
+#  Leave a channel as '' to turn it off.
+# ------------------------------------------------------------
+channels:
+  # Two-way chat, plus deaths and advancements.
+  chat: '000000000000000000'
+  # Join, leave and server start/stop. Uses the chat channel when empty.
+  status: ''
+  # Console log stream and console commands.
+  console: ''
+
+# ------------------------------------------------------------
+#  Console
+# ------------------------------------------------------------
+console:
+  # Discord user IDs and role IDs allowed to run commands in the console channel.
+  # Everyone else is blocked, and an empty list blocks everyone.
+  # Quote each ID so YAML keeps it as text.
+  allowed: []
+  #  - '123456789012345678'   # a user ID
+  #  - '876543210987654321'   # a role ID
+
+# ------------------------------------------------------------
+#  Discord -> Minecraft
+# ------------------------------------------------------------
+discord-to-minecraft:
+  # Show messages from the chat channel in game. false makes the bridge one-way.
+  enabled: true
+  # MiniMessage format. Placeholders: <author>, <message>
+  format: '<dark_gray>[<blue>Discord</blue>]</dark_gray> <gray><author></gray><dark_gray>:</dark_gray> <white><message></white>'
+
+# ------------------------------------------------------------
+#  Minecraft -> Discord
+# ------------------------------------------------------------
+minecraft-to-discord:
+  # Player head image used by {avatar}. Placeholders: {uuid} (no dashes), {name}
+  avatar-url: 'https://crafthead.net/helm/{uuid}/64'
+
+  # Every event below has the same settings:
+  #   enabled   false stops this event from being sent.
+  #   mode      PLAIN sends `text`. EMBED sends the `embed` block.
+  #   embed     Empty fields are left out. color is a hex value like '#57F287'.
+  #   webhook   enabled: true posts through a channel webhook, showing `name` and
+  #             `avatar` instead of the bot. The bot needs Manage Webhooks.
+  #             A blank name or avatar uses the bot's own.
+  # Mentions (@everyone, @here, users, roles) never ping.
+  events:
+    # Placeholders: {player}, {message}, {avatar}
+    chat:
+      enabled: true
+      # Only send messages every online player can see. Staff and team chat plugins
+      # that hide a message from other players get skipped. /ignore plugins hide
+      # messages too, so set this to false if normal chat goes missing.
+      public-only: true
+      mode: PLAIN
+      text: '**{player}**: {message}'
+      embed:
+        color: '#5865F2'
+        author: '{player}'
+        author-icon: '{avatar}'
+        title: ''
+        description: '{message}'
+        footer: ''
+        timestamp: false
+      webhook:
+        enabled: false
+        name: '{player}'
+        avatar: '{avatar}'
+
+    # Placeholders: {player}, {avatar}
+    join:
+      enabled: true
+      mode: EMBED
+      text: '➡️ **{player}** joined the server'
+      embed:
+        color: '#57F287'
+        author: '{player} joined the server'
+        author-icon: '{avatar}'
+        title: ''
+        description: ''
+        footer: ''
+        timestamp: true
+      webhook:
+        enabled: false
+        name: '{player}'
+        avatar: '{avatar}'
+
+    # Placeholders: {player}, {avatar}
+    leave:
+      enabled: true
+      mode: EMBED
+      text: '⬅️ **{player}** left the server'
+      embed:
+        color: '#ED4245'
+        author: '{player} left the server'
+        author-icon: '{avatar}'
+        title: ''
+        description: ''
+        footer: ''
+        timestamp: true
+      webhook:
+        enabled: false
+        name: '{player}'
+        avatar: '{avatar}'
+
+    # Placeholders: {player}, {death_message}, {avatar}
+    death:
+      enabled: true
+      mode: EMBED
+      text: '💀 {death_message}'
+      embed:
+        color: '#99AAB5'
+        author: '{death_message}'
+        author-icon: '{avatar}'
+        title: ''
+        description: ''
+        footer: ''
+        timestamp: true
+      webhook:
+        enabled: false
+        name: '{player}'
+        avatar: '{avatar}'
+
+    # Placeholders: {player}, {advancement}, {avatar}
+    advancement:
+      enabled: true
+      mode: EMBED
+      text: '🏆 **{player}** has made the advancement **{advancement}**'
+      embed:
+        color: '#FEE75C'
+        author: '{player} has made the advancement {advancement}'
+        author-icon: '{avatar}'
+        title: ''
+        description: ''
+        footer: ''
+        timestamp: true
+      webhook:
+        enabled: false
+        name: '{player}'
+        avatar: '{avatar}'
+
+    # No placeholders
+    server-start:
+      enabled: true
+      mode: EMBED
+      text: '✅ **Server is online**'
+      embed:
+        color: '#57F287'
+        author: ''
+        author-icon: ''
+        title: '✅ Server is online'
+        description: ''
+        footer: ''
+        timestamp: true
+      webhook:
+        enabled: false
+        name: ''
+        avatar: ''
+
+    # No placeholders
+    server-stop:
+      enabled: true
+      mode: EMBED
+      text: '🛑 **Server has stopped**'
+      embed:
+        color: '#ED4245'
+        author: ''
+        author-icon: ''
+        title: '🛑 Server has stopped'
+        description: ''
+        footer: ''
+        timestamp: true
+      webhook:
+        enabled: false
+        name: ''
+        avatar: ''

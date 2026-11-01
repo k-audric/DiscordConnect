@@ -1,0 +1,20 @@
+name: DiscordConnect
+version: '${version}'
+
+main: com.kaudric.discordconnect.DiscordConnect
+api-version: '1.21'
+load: POSTWORLD
+folia-supported: true
+libraries:
+  - org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}
+
+permissions:
+  discordconnect.admin:
+    default: op
+    children:
+      discordconnect.command.reload: true
+      discordconnect.command.status: true
+  discordconnect.command.reload:
+    default: op
+  discordconnect.command.status:
+    default: op

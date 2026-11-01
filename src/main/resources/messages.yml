@@ -1,0 +1,9 @@
+prefix: "<dark_gray>[<gradient:#5865F2:#57F287>DiscordConnect</gradient>]</dark_gray> "
+
+errors:
+  reload-failed: "<prefix><red>Failed to reload configuration: <error></red>"
+
+commands:
+  reload-success: "<prefix><green>Configuration and messages reloaded successfully.</green>"
+  status-online: "<prefix><green>Discord bot is connected as <white><bot_tag></white> (Guilds: <white><guilds></white>).</green>"
+  status-offline: "<prefix><yellow>Discord bot is currently disconnected or connecting...</yellow>"
