@@ -32,13 +32,17 @@ class MinecraftEventListener(
 
     @EventHandler(priority = EventPriority.MONITOR)
     fun onPlayerJoin(event: PlayerJoinEvent) {
-        plugin.discordSender.send(plugin.pluginConfig.events.join, playerValues(event.player), "status", "chat")
+        if (!event.player.isVanished() && event.joinMessage() != null) {
+            plugin.discordSender.send(plugin.pluginConfig.events.join, playerValues(event.player), "status", "chat")
+        }
         refreshPresence()
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     fun onPlayerQuit(event: PlayerQuitEvent) {
-        plugin.discordSender.send(plugin.pluginConfig.events.leave, playerValues(event.player), "status", "chat")
+        if (!event.player.isVanished() && event.quitMessage() != null) {
+            plugin.discordSender.send(plugin.pluginConfig.events.leave, playerValues(event.player), "status", "chat")
+        }
         refreshPresence()
     }
 
@@ -48,6 +52,7 @@ class MinecraftEventListener(
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun onPlayerDeath(event: PlayerDeathEvent) {
+        if (event.player.isVanished()) return
         val deathMessage = event.deathMessage()?.let(plainSerializer::serialize) ?: return
         val values = playerValues(event.player) + ("death_message" to deathMessage)
         plugin.discordSender.send(plugin.pluginConfig.events.death, values, "chat")
@@ -55,6 +60,7 @@ class MinecraftEventListener(
 
     @EventHandler(priority = EventPriority.MONITOR)
     fun onAdvancementDone(event: PlayerAdvancementDoneEvent) {
+        if (event.player.isVanished()) return
         val display = event.advancement.display ?: return
         if (!display.doesAnnounceToChat()) return
 
@@ -66,4 +72,14 @@ class MinecraftEventListener(
         "player" to player.name,
         "avatar" to plugin.discordSender.avatarUrl(player.uniqueId, player.name)
     )
+}
+
+fun Player.isVanished(): Boolean {
+    val keys = listOf("vanish", "vanished", "vanishes", "vanishs", "hidden")
+    for (key in keys) {
+        for (meta in getMetadata(key)) {
+            if (meta.asBoolean()) return true
+        }
+    }
+    return false
 }

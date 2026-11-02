@@ -1,6 +1,7 @@
 package com.kaudric.discordconnect.discord
 
 import com.kaudric.discordconnect.DiscordConnect
+import com.kaudric.discordconnect.listener.isVanished
 import com.kaudric.discordconnect.config.PresenceConfig
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
@@ -96,8 +97,9 @@ class DiscordBotService(private val plugin: DiscordConnect) {
     }
 
     private fun activity(presence: PresenceConfig): Activity? {
+        val count = plugin.server.onlinePlayers.count { !it.isVanished() }
         val text = presence.activityText
-            .replace("{online}", plugin.server.onlinePlayers.size.toString())
+            .replace("{online}", count.toString())
             .replace("{max_players}", plugin.server.maxPlayers.toString())
             .take(128)
         if (text.isBlank()) return null
