@@ -33,7 +33,7 @@ A lightweight, asynchronous Discord bridge for Paper and Folia servers.
 
 ## Installation & Configuration
 
-1. Place `DiscordConnect-1.0.0.jar` into your server's `plugins/` directory and start the server to generate default configurations.
+1. Place `DiscordConnect-1.0.2.jar` into your server's `plugins/` directory and start the server to generate default configurations.
 2. Open `plugins/DiscordConnect/config.yml`.
 3. Set `bot.token` to your bot's token.
 4. Fill in channel IDs under `channels`:
@@ -88,12 +88,19 @@ Minecraft chat uses Adventure MiniMessage syntax in `discord-to-minecraft.format
 
 ## Commands & Permissions
 
+### In-Game Commands
+
 | Command | Permission | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `/discordconnect reload` (alias: `/dc reload`) | `discordconnect.command.reload` | `op` | Reloads `config.yml` and `messages.yml` without restarting the server. |
 | `/discordconnect status` (alias: `/dc status`) | `discordconnect.command.status` | `op` | Displays Discord bot connection status and guild count. |
 
 Parent permission `discordconnect.admin` grants access to all subcommands.
+
+### Discord Slash Commands
+
+- `/playerlist` (and `/list`): Returns the current online player count and player list, automatically excluding vanished players.
+- Fully configurable in `config.yml` under `commands.playerlist` (supports `PLAIN` or `EMBED` mode, `ephemeral` visibility, user/role whitelist via `allowed`, and channel whitelist via `allowed-channels`).
 
 ## Building from Source
 
@@ -104,4 +111,4 @@ Build the shadow jar using Gradle:
 gradlew.bat build      # Windows
 ```
 
-The compiled jar will be in `build/libs/DiscordConnect-1.0.0.jar`.
+The compiled jar will be in `build/libs/DiscordConnect-1.0.2.jar`.

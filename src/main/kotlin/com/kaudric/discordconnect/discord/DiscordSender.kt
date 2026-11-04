@@ -149,7 +149,7 @@ class DiscordSender(private val plugin: DiscordConnect) {
     private fun unwrap(error: Throwable): Throwable =
         if ((error is CompletionException || error is ExecutionException) && error.cause != null) unwrap(error.cause ?: error) else error
 
-    private fun buildEmbed(embed: EmbedFormat, values: Map<String, String>): MessageEmbed? {
+    fun buildEmbed(embed: EmbedFormat, values: Map<String, String>): MessageEmbed? {
         val author = fill(embed.author, values, escapeMarkdown = false).take(MessageEmbed.AUTHOR_MAX_LENGTH)
         val title = fill(embed.title, values, escapeMarkdown = false).take(MessageEmbed.TITLE_MAX_LENGTH)
         val description = fill(embed.description, values, escapeMarkdown = true).take(MessageEmbed.DESCRIPTION_MAX_LENGTH)
@@ -169,7 +169,7 @@ class DiscordSender(private val plugin: DiscordConnect) {
         return builder.build()
     }
 
-    private fun fill(template: String, values: Map<String, String>, escapeMarkdown: Boolean): String =
+    fun fill(template: String, values: Map<String, String>, escapeMarkdown: Boolean): String =
         placeholderRegex.replace(template) { match ->
             val value = values[match.groupValues[1]] ?: return@replace match.value
             if (escapeMarkdown) MarkdownSanitizer.escape(value) else value

@@ -45,6 +45,16 @@ data class EventFormats(
     val serverStop: EventFormat
 )
 
+data class SlashCommandConfig(
+    val enabled: Boolean,
+    val ephemeral: Boolean,
+    val allowed: Set<String>,
+    val allowedChannels: Set<String>,
+    val mode: SendMode,
+    val text: String,
+    val embed: EmbedFormat
+)
+
 data class PluginConfig(
     val botToken: String,
     val channels: Map<String, String>,
@@ -54,7 +64,8 @@ data class PluginConfig(
     val discordToMinecraft: String,
     val avatarUrl: String,
     val chatPublicOnly: Boolean,
-    val events: EventFormats
+    val events: EventFormats,
+    val playerlistCommand: SlashCommandConfig
 ) {
     fun textChannel(jda: JDA, key: String): TextChannel? = channels[key]?.let(jda::getTextChannelById)
 
@@ -92,7 +103,8 @@ data class PluginConfig(
                     advancement = loadEvent(config, "advancement"),
                     serverStart = loadEvent(config, "server-start"),
                     serverStop = loadEvent(config, "server-stop")
-                )
+                ),
+                playerlistCommand = loadSlashCommand(config, "playerlist")
             )
         }
 
@@ -106,16 +118,37 @@ data class PluginConfig(
                 webhookName = config.getString("$path.webhook.name") ?: "",
                 webhookAvatar = config.getString("$path.webhook.avatar") ?: "",
                 text = config.getString("$path.text") ?: "",
-                embed = EmbedFormat(
-                    color = config.getString("$path.embed.color")?.trim()?.removePrefix("#")?.toIntOrNull(16),
-                    author = config.getString("$path.embed.author") ?: "",
-                    authorIcon = config.getString("$path.embed.author-icon") ?: "",
-                    title = config.getString("$path.embed.title") ?: "",
-                    description = config.getString("$path.embed.description") ?: "",
-                    footer = config.getString("$path.embed.footer") ?: "",
-                    timestamp = config.getBoolean("$path.embed.timestamp")
-                )
+                embed = loadEmbed(config, "$path.embed")
             )
         }
+
+        private fun loadSlashCommand(config: FileConfiguration, key: String): SlashCommandConfig {
+            val path = "commands.$key"
+            val mode = if (config.getString("$path.mode").equals("EMBED", ignoreCase = true)) SendMode.EMBED else SendMode.PLAIN
+            return SlashCommandConfig(
+                enabled = config.getBoolean("$path.enabled", true),
+                ephemeral = config.getBoolean("$path.ephemeral", false),
+                allowed = config.getList("$path.allowed").orEmpty()
+                    .mapNotNull { it?.toString()?.trim()?.takeIf(String::isNotEmpty) }
+                    .toSet(),
+                allowedChannels = config.getList("$path.allowed-channels").orEmpty()
+                    .mapNotNull { it?.toString()?.trim()?.takeIf(String::isNotEmpty) }
+                    .toSet(),
+                mode = mode,
+                text = config.getString("$path.text") ?: "",
+                embed = loadEmbed(config, "$path.embed")
+            )
+        }
+
+        private fun loadEmbed(config: FileConfiguration, path: String): EmbedFormat =
+            EmbedFormat(
+                color = config.getString("$path.color")?.trim()?.removePrefix("#")?.toIntOrNull(16),
+                author = config.getString("$path.author") ?: "",
+                authorIcon = config.getString("$path.author-icon") ?: "",
+                title = config.getString("$path.title") ?: "",
+                description = config.getString("$path.description") ?: "",
+                footer = config.getString("$path.footer") ?: "",
+                timestamp = config.getBoolean("$path.timestamp")
+            )
     }
 }

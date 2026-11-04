@@ -47,6 +47,38 @@ console:
   #  - '876543210987654321'   # a role ID
 
 # ------------------------------------------------------------
+#  Commands
+# ------------------------------------------------------------
+commands:
+  # Handles both /playerlist and /list slash commands.
+  playerlist:
+    enabled: true
+    # true makes the response visible only to the person running the command.
+    ephemeral: false
+    # Discord user IDs and role IDs allowed to run this command.
+    # Everyone else is blocked if not empty. Empty list allows everyone.
+    # Quote each ID so YAML keeps it as text.
+    allowed: []
+    #  - '123456789012345678'   # a user ID
+    #  - '876543210987654321'   # a role ID
+    # Discord channel IDs where this command is allowed to be run.
+    # Empty list allows running in any channel.
+    allowed-channels: []
+    #  - '123456789012345678'   # a channel ID
+    # PLAIN sends `text`. EMBED sends the `embed` block.
+    mode: EMBED
+    # Placeholders: {online}, {max_players}, {players}
+    text: '**Online Players ({online}/{max_players})**: {players}'
+    embed:
+      color: '#5865F2'
+      author: ''
+      author-icon: ''
+      title: 'Online Players ({online}/{max_players})'
+      description: '{players}'
+      footer: ''
+      timestamp: true
+
+# ------------------------------------------------------------
 #  Discord -> Minecraft
 # ------------------------------------------------------------
 discord-to-minecraft:
