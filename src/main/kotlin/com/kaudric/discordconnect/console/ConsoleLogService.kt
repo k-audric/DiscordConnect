@@ -76,7 +76,10 @@ class ConsoleLogService(private val plugin: DiscordConnect) {
 
         val message = event.message?.formattedMessage.orEmpty()
         val trace = event.thrown?.let { "\n" + it.stackTraceToString() }.orEmpty()
-        val clean = SECTION_CODE_REGEX.replace(ANSI_REGEX.replace(message + trace, ""), "").trimEnd()
+        val raw = SECTION_CODE_REGEX.replace(ANSI_REGEX.replace(message + trace, ""), "")
+        val clean = plugin.pluginConfig.consoleFilters.fold(raw) { acc, filter ->
+            filter.regex.replace(acc, filter.replacement)
+        }.trimEnd()
         if (clean.isBlank()) return null
 
         val showName = loggerName.isNotBlank() && !loggerName.startsWith("net.minecraft") && loggerName != "Minecraft"

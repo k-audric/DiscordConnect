@@ -55,10 +55,16 @@ data class SlashCommandConfig(
     val embed: EmbedFormat
 )
 
+data class ConsoleFilter(
+    val regex: Regex,
+    val replacement: String
+)
+
 data class PluginConfig(
     val botToken: String,
     val channels: Map<String, String>,
     val consoleAllowed: Set<String>,
+    val consoleFilters: List<ConsoleFilter>,
     val presence: PresenceConfig,
     val discordToMinecraftEnabled: Boolean,
     val discordToMinecraft: String,
@@ -84,12 +90,19 @@ data class PluginConfig(
                 activityText = config.getString("bot.presence.activity.text") ?: ""
             )
 
+            val consoleFilters = config.getMapList("console.filters").mapNotNull { entry ->
+                val match = entry["match"]?.toString()?.takeIf(String::isNotEmpty) ?: return@mapNotNull null
+                val replace = entry["replace"]?.toString() ?: ""
+                runCatching { ConsoleFilter(Regex(match), replace) }.getOrNull()
+            }
+
             return PluginConfig(
                 botToken = config.getString("bot.token") ?: "",
                 channels = channels,
                 consoleAllowed = config.getList("console.allowed").orEmpty()
                     .mapNotNull { it?.toString()?.trim()?.takeIf(String::isNotEmpty) }
                     .toSet(),
+                consoleFilters = consoleFilters,
                 presence = presence,
                 discordToMinecraftEnabled = config.getBoolean("discord-to-minecraft.enabled"),
                 discordToMinecraft = config.getString("discord-to-minecraft.format") ?: "",

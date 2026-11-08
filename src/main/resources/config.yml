@@ -46,6 +46,19 @@ console:
   #  - '123456789012345678'   # a user ID
   #  - '876543210987654321'   # a role ID
 
+  # Regex replacements applied to console lines before streaming to Discord.
+  # If a line becomes empty after filtering, it will not be sent at all.
+  filters:
+    # Redact IPv4 addresses and optional ports
+    - match: '\b(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)(?::\d{1,5})?\b'
+      replace: '[IP REDACTED]'
+    # Redact in-game coordinates (e.g. "at ([world]10.6, 120.4, 11.7)" or "at (-120.5, 64.0, 310.2)")
+    - match: '(\[[A-Za-z0-9_:-]+\]\s*)?-?\d+(?:\.\d+)?(?:\s*,\s*|\s+)-?\d+(?:\.\d+)?(?:\s*,\s*|\s+)-?\d+(?:\.\d+)?'
+      replace: '$1[COORDS REDACTED]'
+    # Redact Discord bot tokens
+    - match: '[A-Za-z\d]{24,}\.[\w-]{6}\.[\w-]{27,}'
+      replace: '[TOKEN REDACTED]'
+
 # ------------------------------------------------------------
 #  Commands
 # ------------------------------------------------------------

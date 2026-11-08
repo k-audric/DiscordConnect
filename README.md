@@ -33,7 +33,7 @@ A lightweight, asynchronous Discord bridge for Paper and Folia servers.
 
 ## Installation & Configuration
 
-1. Place `DiscordConnect-1.0.2.jar` into your server's `plugins/` directory and start the server to generate default configurations.
+1. Place `DiscordConnect-1.0.3.jar` into your server's `plugins/` directory and start the server to generate default configurations.
 2. Open `plugins/DiscordConnect/config.yml`.
 3. Set `bot.token` to your bot's token.
 4. Fill in channel IDs under `channels`:
@@ -58,11 +58,15 @@ The console channel streams console logs and executes commands sent into the cha
 ```yaml
 console:
   allowed:
-    - "123456789012345678" # User ID
-    - "876543210987654321" # Role ID
+    - '123456789012345678' # User ID
+    - '876543210987654321' # Role ID
 ```
 
 Commands can be prefixed with `/` or typed directly. Every executed command is logged to the server with the Discord author's username and ID.
+
+#### Console Log Censoring (`console.filters`)
+
+Regex replacement filters are applied to console lines before streaming to Discord. By default, filters are included to redact IPv4 addresses/ports, in-game coordinates, and Discord bot tokens. If a line becomes empty after filtering, it is suppressed completely.
 
 ### Message & Event Formatting
 
@@ -111,4 +115,4 @@ Build the shadow jar using Gradle:
 gradlew.bat build      # Windows
 ```
 
-The compiled jar will be in `build/libs/DiscordConnect-1.0.2.jar`.
+The compiled jar will be in `build/libs/DiscordConnect-1.0.3.jar`.
